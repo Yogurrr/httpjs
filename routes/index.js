@@ -6,7 +6,9 @@ const html = 'text/html; charset=utf-8';
 
 // show index page
 router.get('/',(req, res) => {
-    res.sendFile(path.join(__dirname, '../public', 'index.html'));
+    // res.sendFile(path.join(__dirname, '../public', 'index.html'));
+    // handlebars 뷰 엔진으로 응답 처리
+    res.render('index', {title: 'index'});
 });
 
 // 단순한 그림 파일을 화면에 표시하기 위해
