@@ -45,7 +45,7 @@ class SungJuk {
 
         try {
             conn = await oracledb.makeConn();
-            result = conn.execute(this.selectsql, [], this.options);
+            result = await conn.execute(this.selectsql, [], this.options);
             let rs = result.resultSet;
             let row = null;
             while((row = await rs.getRow())) {
