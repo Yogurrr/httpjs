@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const SungJuk = require('../models/SungJuk')
+const Member = require('../models/Member')
 
 const router = express.Router();
 
@@ -20,7 +21,7 @@ router.get('/sungjuk',(req, res) => {
 router.post('/sungjuk',(req, res, next) => {
     // 폼으로 전송된 데이터들은 req.body, req.body.폼이름 등으로 확인 가능
     // console.log(req.body);
-    // console.log(req.body.name, req.body.kor, req.body.eng, req.body.mat);
+    // console.log(req.body.name, req.body.kor, req.body.eng, req.body.email);
 
     let {name, kor, eng, mat} = req.body;
     kor = parseInt(kor)
@@ -44,6 +45,33 @@ router.post('/sungjuk',(req, res, next) => {
 
     res.redirect(304, '/');
 });
+
+router.get('/showsungjuk',async (req, res) => {
+    let sjs = new SungJuk().select().then(async result => { return await result; });
+    console.log(await sjs);
+
+    res.render('showsungjuk', {title: '성적 전체 보기', sjs: await sjs});
+});
+
+
+/*router.get('/member',(req, res) => {
+    res.render('member', {title: '회원 테이블'});
+});
+
+router.post('/member',(req, res, next) => {
+    // 폼으로 전송된 데이터들은 req.body, req.body.폼이름 등으로 확인 가능
+    // console.log(req.body);
+    // console.log(req.body.name, req.body.kor, req.body.eng, req.body.mat);
+
+    let {userid, passwd, name, email} = req.body;
+    console.log(userid, passwd, name, email);
+
+    // 데이터베이스 처리 - sungjuk 테이블에 insert
+    // 한 번 만든 다음에 다시 실행하면 이미 존재하고 있어서 오류 뜸
+    new Member(userid, passwd, name, email).insert();
+
+    res.redirect(304, '/');
+});*/
 
 // 단순한 그림 파일을 화면에 표시하기 위해
 // 일일이 라우팅 설정하는 것은 번거로움

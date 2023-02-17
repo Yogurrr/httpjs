@@ -1,6 +1,14 @@
 const oracledb = require('../models/Oracle');
 
 class SungJuk {
+
+    options = {
+        resultSet: true,
+        outFormat: oracledb.OUT_FORMAT_OBJECT
+    };
+
+    selectsql = 'select sjno, name, kor, eng, mat, regdate from sungjuk order by sjno desc';
+
     // 생성자 정의 - 변수 초기화
     // 즉, 매개변수로 전달된 값을 클래스 멤버 변수에 대입함
     constructor(name, kor, eng, mat, tot, avg, grd) {
@@ -31,7 +39,28 @@ class SungJuk {
     }
 
     // 성적 전체 조회
-    select() {}
+    async select() {
+        let conn = null;
+        let result = null;
+
+        try {
+            conn = await oracledb.makeConn();
+            result = conn.execute(this.selectsql, [], this.options);
+            let rs = result.resultSet;
+            let row = null;
+            while((row = await rs.getRow())) {
+                result = new SungJuk(row[1], row[2], row[3], row[4]);
+                result.sjno = row[0];
+                result.regdate = row[5];
+            }
+        } catch (e) {
+            console.log(e);
+        } finally {
+            await oracledb.closeConn(conn);
+        }
+
+        return await result;
+    }
 
     // 성적 상세 조회
     selectOne(sjno) {}
