@@ -9,6 +9,9 @@ class SungJuk {
 
     selectsql = `select sjno, name, kor, eng, mat, to_char(regdate, \'YYYY-MM-DD\') from sungjuk order by sjno desc`;
 
+    selectOnesql = `select sjno, name, kor, eng, mat, tot, avg, grd, to_char(regdate, \'YYYY-MM-DD HH:MI:SS\') from sungjuk where sjno = :1`;
+
+
     // 생성자 정의 - 변수 초기화
     // 즉, 매개변수로 전달된 값을 클래스 멤버 변수에 대입함
     constructor(name, kor, eng, mat, tot, avg, grd) {
@@ -66,7 +69,31 @@ class SungJuk {
     }
 
     // 성적 상세 조회
-    selectOne(sjno) {}
+    async selectOne(sjno) {
+        let conn = null;
+        let result = null;
+        let sjs = [];
+
+        try {
+            conn = await oracledb.makeConn();
+            result = await conn.execute(this.selectOnesql, [sjno], this.options);
+
+            let rs = result.resultSet;
+            let row = null;
+            while((row = await rs.getRow())) {
+                let sj = new SungJuk(row[1], row[2], row[3], row[4], row[5], row[6], row[7]);
+                sj.sjno = row[0];
+                sj.regdate = row[8];
+                sjs.push(sj);
+            }
+        } catch (e) {
+            console.log(e);
+        } finally {
+            await oracledb.closeConn(conn);
+        }
+
+        return await sjs;
+    }
 }
 
 module.exports = SungJuk;

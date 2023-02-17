@@ -53,6 +53,16 @@ router.get('/showsungjuk',async (req, res) => {
     res.render('showsungjuk', {title: '성적 전체 보기', sjs: await sjs});
 });
 
+router.get('/viewsungjuk',async (req, res) => {
+    
+    let sjno = req.query.sjno;   // querystring의 매개변수 추출
+    
+    let sjs = new SungJuk().selectOne(sjno).then(async result => { return await result; });
+    console.log(await sjs);
+
+    res.render('viewsungjuk', {title: '성적 상세 보기', sjs: await sjs});
+});
+
 
 /*router.get('/member',(req, res) => {
     res.render('member', {title: '회원 테이블'});
